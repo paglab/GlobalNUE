@@ -1,0 +1,126 @@
+# Method 5 OAT using year-specific processed NUE mask as STRICT spatial domain.
+# Mask values are NOT used, only valid finite non-NoData pixels.
+# If a reference mask file is missing or its grid differs, the run stops.
+# Maize/Rice: set reference_nue_mask.directory to the corresponding processed NUE folder.
+scientific_settings_confirmed: true
+crop: rice
+years:
+- 1995
+- 2020
+output_dir: Z:/staff/Qiang_S/09_Datasets/03GlobalNUE_Results/03Global_NUE_Rice/04RiceNUE_M2_OAT_FixedMaskV1031
+block_height: 64
+block_width: 64
+parallel:
+  enabled: true
+  max_workers: 4
+out_nodata: -9999.0
+output_decimals: 6
+SN: 1.2
+BNF: 25.0
+nup_equation:
+  yield_coefficient: 0.01178154
+  fertilizer_manure_coefficient: 0.04751548
+  intercept: -7.92857
+  min_nup: 1.5
+  include_manure: true
+sources:
+  yield:
+  - id: GAEZ
+    directory: Z:\staff\Qiang_S\09_Datasets\02N_Output\03Global_Yield_Rice\02StandardizedDatasets\RiceYield_GAEZ5min
+    group: Y_GAEZ
+    group_weight: 0.23
+    within_group_weight: 1.0
+  - id: GDHY
+    directory: Z:\staff\Qiang_S\09_Datasets\02N_Output\03Global_Yield_Rice\02StandardizedDatasets\RiceYield_GDHY5min
+    group: Y_GDHY
+    group_weight: 0.23
+    within_group_weight: 1.0
+  - id: GlobalCropYield5min
+    directory: Z:\staff\Qiang_S\09_Datasets\02N_Output\03Global_Yield_Rice\02StandardizedDatasets\RiceYield_GlobalCropYield5min
+    group: Y_GCY
+    group_weight: 0.3
+    within_group_weight: 0.6
+  - id: GlobalRiceYield4km
+    directory: Z:\staff\Qiang_S\09_Datasets\02N_Output\03Global_Yield_Rice\02StandardizedDatasets\RiceYield_AsiaRiceYield4km5min
+    group: Y_GCY
+    group_weight: 0.3
+    within_group_weight: 0.4
+  - id: SPAM
+    directory: Z:\staff\Qiang_S\09_Datasets\02N_Output\03Global_Yield_Rice\02StandardizedDatasets\RiceYield_SPAM5min
+    group: Y_SPAM
+    group_weight: 0.24
+    within_group_weight: 1.0
+  F:
+  - id: GCSN_F
+    directory: Z:\staff\Qiang_S\09_Datasets\01N_Input\01Global_SyntheticFertilizer\02StandardizedDatasets\03GCSN_Fer_Rice_Standardized
+    group: F_A
+    group_weight: 0.35
+    within_group_weight: 0.6
+  - id: HaNi_F
+    directory: Z:\staff\Qiang_S\09_Datasets\01N_Input\01Global_SyntheticFertilizer\02StandardizedDatasets\03HaNi_Fer_Rice_Standardized
+    group: F_A
+    group_weight: 0.35
+    within_group_weight: 0.4
+  - id: LUH2v2_F
+    directory: Z:\staff\Qiang_S\09_Datasets\01N_Input\01Global_SyntheticFertilizer\02StandardizedDatasets\03LUH2v2_Fer_Rice_Standardized
+    group: F_B
+    group_weight: 0.3
+    within_group_weight: 1.0
+  - id: NPKGRIDS_F
+    directory: Z:\staff\Qiang_S\09_Datasets\01N_Input\01Global_SyntheticFertilizer\02StandardizedDatasets\03NPKGRIDS_Fer_Rice_Standardized
+    group: F_C
+    group_weight: 0.35
+    within_group_weight: 1.0
+  M:
+  - id: GCSN_M
+    directory: Z:\staff\Qiang_S\09_Datasets\01N_Input\02Global_Manure\02StandardizedDatasets\03GCSN_Man_Rice_Standardized
+    group: M_GCSN
+    group_weight: 0.5
+    within_group_weight: 1.0
+  - id: HaNi_M
+    directory: Z:\staff\Qiang_S\09_Datasets\01N_Input\02Global_Manure\02StandardizedDatasets\03HaNi_Man_Rice_Standardized
+    group: M_HaNi
+    group_weight: 0.5
+    within_group_weight: 1.0
+  D:
+  - id: WL_D
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/03Global_Deposition/02StandardizedDatasets/4_WL_5min4Crops1995_2020
+    group: D_WL
+    group_weight: 1.0
+    within_group_weight: 1.0
+oat:
+  factors:
+  - yield
+  - F
+  - M
+  - D
+  - SN
+  - BNF
+  relative_change: 0.15
+aggregation:
+  mode: nup_ratio_of_sums
+  area_threshold: 0.0
+  nue_min_value: 0.0
+  nup_min_value: 0.0
+  additional_nodata:
+  - -9999.0
+  use_written_raster_precision: true
+  harvested_area:
+    # REQUIRED: fill with the actual GCSN Rice harvested-area GeoTIFF folder.
+    directory: Z:\staff\Qiang_S\09_Datasets\09OtherDataUsed\GCSN_HarvestedArea_1995_2020\02StandardizedDatasets\03RiceHarvestedArea
+    filename_template: Rice_HarArea_{year}.tif
+raster_outputs:
+  baseline_median: true
+  delta_pp: true
+  sensitivity_coefficient: true
+  baseline_nup: true
+plot:
+  create_tornado: true
+  dpi: 300
+reference_nue_mask:
+  # REQUIRED: fill with the processed Rice NUE raster folder.
+  # File name for every year: NUE_median_Opt_YYYY.tif
+  directory: Z:\staff\Qiang_S\09_Datasets\03GlobalNUE_Results\03Global_NUE_Rice\03RiceNUE_M2_20261029V1_M6_150R
+  filename_template: NUE_median_Opt_{year}.tif
+  additional_nodata:
+  - -9999.0

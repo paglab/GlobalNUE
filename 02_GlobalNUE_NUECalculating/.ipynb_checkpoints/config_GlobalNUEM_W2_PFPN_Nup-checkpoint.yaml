@@ -1,0 +1,87 @@
+# IMPORTANT: This is a PROPOSED M2 definition, not a confirmed scientific model.
+# Review dependency groups/weights AND the definition of M2 first; then set true.
+scientific_settings_confirmed: true
+
+years: [1995, 2020]
+output_dir: 'Z:/staff/Qiang_S/09_Datasets/03GlobalNUE_Results/02Global_NUE_Maize/02MaizeNUE_M2_20261029V1'
+points_xlsx: 'Z:/staff/Qiang_S/09_Datasets/09OtherDataUsed/09_Meta_AnalysisFields/NUE_Global_Farms 20251103_calculateTopWheatForCal.xlsx'
+tmp_dir: null
+delete_tmp: true
+block_height: 512
+block_width: 512
+out_nodata: -9999.0
+# Decimal rounding before Float32 output; does not guarantee exact decimal storage.
+output_decimals: 6
+# Additional annual outputs: NUE_M2_p2_5_YEAR.tif,
+# NUE_M2_p97_5_YEAR.tif and NUE_M2_p95_diff_YEAR.tif.
+# These use source-combination weights and linear weighted percentiles.
+SN: 0.4
+BNF: 5.0
+# Nup = a*Yield + b*(F + M if include_manure else F) + intercept, floored at min_nup
+# Nup is kg N/ha if Yield is kg/ha and F, M are kg N/ha.
+# The intercept must be populated from the fitted regression before running.
+
+# 20261027V2 yield_coefficient: 0.0144
+# 20261028V1 parameters are same with 20261027v1 6.6
+
+nup_equation:
+  #yield_coefficient: 0.0144
+  yield_coefficient: 0.0123938
+  
+  fertilizer_manure_coefficient: 0.03345389
+  #fertilizer_manure_coefficient: 0
+  
+  intercept: 5.38694
+  #intercept: 0
+  # Minimum valid Nup (kg N/ha), enforced after the regression equation.
+  # 20261026v2 11.5
+  # 20261027v1 6.6
+  # 20261029v1 11.5
+  min_nup: 11.5
+  # true: Nup = a*Yield + b*(F+M) + c
+  # false: Nup = a*Yield + b*F + c
+  # Manure is ALWAYS included in NUE denominator either way.
+  include_manure: true
+
+# Additional output for each processed year: PFPN_M2_median_YYYY.tif
+# PFPN = selected combination Yield / synthetic fertilizer N (F).
+# The combination is closest to M2's weighted median NUE; tied values
+# prefer higher combination weight, then earlier combination index.
+# Invalid/zero fertilizer => PFPN NoData (-9999).
+# NEW: Nup_M2_median_YYYY.tif stores Nup (kg N/ha) from the SAME
+# NUE-median-selected source combination as PFPN. No new parameter needed.
+# Existing Nup regression, manure switch, minimum threshold remain unchanged.
+
+# All group_weight values in DISTINCT groups must sum to 1 per factor.
+# All within_group_weight values must sum to 1 within EACH group.
+# Listed groups/weights are TEMPORARY ILLUSTRATIONS requiring scientific review.
+# No independent evidence for the true statistical correlation is assumed.
+
+#20261026v2 0.25 * 4
+#20261027v1 0.25 * 4
+#20261027v1 0.25 * 4
+
+sources:
+  yield:
+    - {id: GAEZ, directory: 'Z:\staff\Qiang_S\09_Datasets\02N_Output\02Global_Yield_Maize\02StandardizedDatasets\MaizeYield_GAEZ5min', group: Y_GAEZ, group_weight: 0.25, within_group_weight: 1.0}
+    - {id: GDHY, directory: 'Z:\staff\Qiang_S\09_Datasets\02N_Output\02Global_Yield_Maize\02StandardizedDatasets\MaizeYield_GDHY5min', group: Y_GDHY, group_weight: 0.25, within_group_weight: 1.0}
+    - {id: GlobalCropYield5min, directory: 'Z:\staff\Qiang_S\09_Datasets\02N_Output\02Global_Yield_Maize\02StandardizedDatasets\MaizeYield_GlobalCropYield5min', group: Y_GCY, group_weight: 0.25, within_group_weight: 1.0}
+    #- {id: GlobalWheatYield4km, directory: 'Z:/staff/Qiang_S/09_Datasets/02N_Output/01Global_Yield_Wheat/02StandardizedDatasets/GlobalWheatYield4km_ReProj5min_Mean', group: Y_GCY, group_weight: 0.30, within_group_weight: 0.4}
+    - {id: SPAM, directory: 'Z:\staff\Qiang_S\09_Datasets\02N_Output\02Global_Yield_Maize\02StandardizedDatasets\MaizeYield_SPAM5min', group: Y_SPAM, group_weight: 0.25, within_group_weight: 1.0}
+    
+  F:
+    # EXAMPLE ONLY: group assignments need provenance-based confirmation.
+    - {id: GCSN_F, directory: 'Z:\staff\Qiang_S\09_Datasets\01N_Input\01Global_SyntheticFertilizer\02StandardizedDatasets\02GCSN_Fer_Maize_Standardized', group: F_A, group_weight: 0.35, within_group_weight: 0.6}
+    
+    - {id: HaNi_F, directory: 'Z:\staff\Qiang_S\09_Datasets\01N_Input\01Global_SyntheticFertilizer\02StandardizedDatasets\02HaNi_Fer_Maize_Standardized', group: F_A, group_weight: 0.35, within_group_weight: 0.4}
+    
+    - {id: LUH2v2_F, directory: 'Z:\staff\Qiang_S\09_Datasets\01N_Input\01Global_SyntheticFertilizer\02StandardizedDatasets\02LUH2v2_Fer_Maize_Standardized', group: F_B, group_weight: 0.30, within_group_weight: 1.0}
+    
+    - {id: NPKGRIDS_F, directory: 'Z:\staff\Qiang_S\09_Datasets\01N_Input\01Global_SyntheticFertilizer\02StandardizedDatasets\02NPKGRIDS_Fer_Maize_Standardized', group: F_C, group_weight: 0.35, within_group_weight: 1.0}
+    
+  M:
+    - {id: GCSN_M, directory: 'Z:\staff\Qiang_S\09_Datasets\01N_Input\02Global_Manure\02StandardizedDatasets\02GCSN_Man_Maize_Standardized', group: M_GCSN, group_weight: 0.5, within_group_weight: 1.0}
+    - {id: HaNi_M, directory: 'Z:\staff\Qiang_S\09_Datasets\01N_Input\02Global_Manure\02StandardizedDatasets\02HaNi_Man_Maize_Standardized', group: M_HaNi, group_weight: 0.5, within_group_weight: 1.0}
+    
+  D:
+    - {id: WL_D, directory: 'Z:\staff\Qiang_S\09_Datasets\01N_Input\03Global_Deposition\02StandardizedDatasets\4_WL_5min4Crops1995_2020', group: D_WL, group_weight: 1.0, within_group_weight: 1.0}

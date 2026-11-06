@@ -1,0 +1,147 @@
+# Rice MC Global Method 5: annual Excel summary + 8 annual GeoTIFFs only.
+# No per-realization rows, CSV files, or PNG/PDF/SVG plots are generated.
+# Global baseline uses processed NUE + Nup + harvested-area rasters.
+# Edit input paths in global_aggregation before running.
+scientific_settings_confirmed: true
+years:
+- 1995
+- 2020
+output_dir: Z:/staff/Qiang_S/09_Datasets/03GlobalNUE_Results/03Global_NUE_Rice/05RiceNUE_MC_Global_Method5_20261031
+block_height: 64
+block_width: 64
+out_nodata: -9999.0
+output_decimals: 6
+SN: 1.2
+BNF: 25.0
+nup_equation:
+  yield_coefficient: 0.01178154
+  fertilizer_manure_coefficient: 0.04751548
+  intercept: -7.92857
+  min_nup: 1.5
+  include_manure: true
+sources:
+  yield:
+  - id: GAEZ
+    directory: Z:/staff/Qiang_S/09_Datasets/02N_Output/03Global_Yield_Rice/02StandardizedDatasets/RiceYield_GAEZ5min
+    group: Y_GAEZ
+    group_weight: 0.23
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: GDHY
+    directory: Z:/staff/Qiang_S/09_Datasets/02N_Output/03Global_Yield_Rice/02StandardizedDatasets/RiceYield_GDHY5min
+    group: Y_GDHY
+    group_weight: 0.23
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: GlobalCropYield5min
+    directory: Z:/staff/Qiang_S/09_Datasets/02N_Output/03Global_Yield_Rice/02StandardizedDatasets/RiceYield_GlobalCropYield5min
+    group: Y_GCY
+    group_weight: 0.3
+    within_group_weight: 0.6
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: GlobalRiceYield4km
+    directory: Z:/staff/Qiang_S/09_Datasets/02N_Output/03Global_Yield_Rice/02StandardizedDatasets/RiceYield_AsiaRiceYield4km5min
+    group: Y_GCY
+    group_weight: 0.3
+    within_group_weight: 0.4
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: SPAM
+    directory: Z:/staff/Qiang_S/09_Datasets/02N_Output/03Global_Yield_Rice/02StandardizedDatasets/RiceYield_SPAM5min
+    group: Y_SPAM
+    group_weight: 0.24
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  F:
+  - id: GCSN_F
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/01Global_SyntheticFertilizer/02StandardizedDatasets/03GCSN_Fer_Rice_Standardized
+    group: F_A
+    group_weight: 0.35
+    within_group_weight: 0.6
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: HaNi_F
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/01Global_SyntheticFertilizer/02StandardizedDatasets/03HaNi_Fer_Rice_Standardized
+    group: F_A
+    group_weight: 0.35
+    within_group_weight: 0.4
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: LUH2v2_F
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/01Global_SyntheticFertilizer/02StandardizedDatasets/03LUH2v2_Fer_Rice_Standardized
+    group: F_B
+    group_weight: 0.3
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: NPKGRIDS_F
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/01Global_SyntheticFertilizer/02StandardizedDatasets/03NPKGRIDS_Fer_Rice_Standardized
+    group: F_C
+    group_weight: 0.35
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  M:
+  - id: GCSN_M
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/02Global_Manure/02StandardizedDatasets/03GCSN_Man_Rice_Standardized
+    group: M_GCSN
+    group_weight: 0.5
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: HaNi_M
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/02Global_Manure/02StandardizedDatasets/03HaNi_Man_Rice_Standardized
+    group: M_HaNi
+    group_weight: 0.5
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  D:
+  - id: WL_D
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/03Global_Deposition/02StandardizedDatasets/4_WL_5min4Crops1995_2020
+    group: D_WL
+    group_weight: 1.0
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+crop: rice
+require_equal_yield_grids: true
+constant_uncertainty:
+  SN:
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  BNF:
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+monte_carlo:
+  scheme: source_mixture_independent
+  distribution: uniform_relative
+  n_simulations: 5000
+  batch_size: 64
+  random_seed: 42
+parallel:
+  enabled: true
+  max_workers: 16
+  max_pending_tasks: 24
+  scratch_dir: null
+global_aggregation:
+  method: nup_ratio_of_sums
+  area_threshold: 0.0
+  nue_min_value: 0.0
+  nup_min_value: 0.0
+  additional_nodata:
+  - -9999.0
+  restrict_to_baseline_valid: true
+  reference_nue_mask:
+    directory: Z:\staff\Qiang_S\09_Datasets\03GlobalNUE_Results\03Global_NUE_Rice\03RiceNUE_M2_20261029V1_M6_150R
+    filename_template: NUE_median_Opt_{year}.tif
+  harvested_area:
+    directory: Z:\staff\Qiang_S\09_Datasets\09OtherDataUsed\GCSN_HarvestedArea_1995_2020\02StandardizedDatasets\03RiceHarvestedArea
+    filename_template: Rice_HarArea_{year}.tif
+  baseline_nup:
+    directory: Z:/staff/Qiang_S/09_Datasets/03GlobalNUE_Results/03Global_NUE_Rice/03RiceNUE_M2_20261029V1
+    filename_template: Nup_M2_median_{year}.tif

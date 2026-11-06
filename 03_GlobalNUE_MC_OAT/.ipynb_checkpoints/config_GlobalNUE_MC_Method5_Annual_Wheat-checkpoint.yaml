@@ -1,0 +1,147 @@
+# Wheat MC Global Method 5: annual Excel summary + 8 annual GeoTIFFs only.
+# No per-realization rows, CSV files, or PNG/PDF/SVG plots are generated.
+# Global baseline uses processed NUE + Nup + harvested-area rasters.
+# Edit input paths in global_aggregation before running.
+scientific_settings_confirmed: true
+years:
+- 1995
+- 2020
+output_dir: Z:/staff/Qiang_S/09_Datasets/03GlobalNUE_Results/01Global_NUE_Wheat/05WheatNUE_MC_v1031
+block_height: 64
+block_width: 64
+out_nodata: -9999.0
+output_decimals: 6
+SN: 3.5
+BNF: 5.0
+nup_equation:
+  yield_coefficient: 0.02021937
+  fertilizer_manure_coefficient: 0.09269749
+  intercept: -5.5811
+  min_nup: 4.5
+  include_manure: true
+sources:
+  yield:
+  - id: GAEZ
+    directory: Z:/staff/Qiang_S/09_Datasets/02N_Output/01Global_Yield_Wheat/02StandardizedDatasets/GAEZ_Wheat
+    group: Y_GAEZ
+    group_weight: 0.23
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: GDHY
+    directory: Z:/staff/Qiang_S/09_Datasets/02N_Output/01Global_Yield_Wheat/02StandardizedDatasets/GDHY_wheat_5min
+    group: Y_GDHY
+    group_weight: 0.23
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: GlobalCropYield5min
+    directory: Z:/staff/Qiang_S/09_Datasets/02N_Output/01Global_Yield_Wheat/02StandardizedDatasets/GlobalCropYield5min_Yield
+    group: Y_GCY
+    group_weight: 0.3
+    within_group_weight: 0.6
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: GlobalWheatYield4km
+    directory: Z:/staff/Qiang_S/09_Datasets/02N_Output/01Global_Yield_Wheat/02StandardizedDatasets/GlobalWheatYield4km_ReProj5min_Mean
+    group: Y_GCY
+    group_weight: 0.3
+    within_group_weight: 0.4
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: SPAM
+    directory: Z:/staff/Qiang_S/09_Datasets/02N_Output/01Global_Yield_Wheat/02StandardizedDatasets/SPAM_Wheat
+    group: Y_SPAM
+    group_weight: 0.24
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  F:
+  - id: GCSN_F
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/01Global_SyntheticFertilizer/02StandardizedDatasets/01GCSN_Fer_Wheat_Standardized
+    group: F_A
+    group_weight: 0.35
+    within_group_weight: 0.6
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: HaNi_F
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/01Global_SyntheticFertilizer/02StandardizedDatasets/01HaNi_Fer_Wheat_Standardized
+    group: F_A
+    group_weight: 0.35
+    within_group_weight: 0.4
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: LUH2v2_F
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/01Global_SyntheticFertilizer/02StandardizedDatasets/01LUH2v2_Fer_Wheat_Standardized
+    group: F_B
+    group_weight: 0.3
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: NPKGRIDS_F
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/01Global_SyntheticFertilizer/02StandardizedDatasets/01NPKGRIDS_Fer_Wheat_Standardized
+    group: F_C
+    group_weight: 0.35
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  M:
+  - id: GCSN_M
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/02Global_Manure/02StandardizedDatasets/01GCSN_Man_Wheat_Standardized
+    group: M_GCSN
+    group_weight: 0.5
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  - id: HaNi_M
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/02Global_Manure/02StandardizedDatasets/01HaNi_Man_Wheat_Standardized
+    group: M_HaNi
+    group_weight: 0.5
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  D:
+  - id: WL_D
+    directory: Z:/staff/Qiang_S/09_Datasets/01N_Input/03Global_Deposition/02StandardizedDatasets/4_WL_5min4Crops1995_2020
+    group: D_WL
+    group_weight: 1.0
+    within_group_weight: 1.0
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+crop: wheat
+require_equal_yield_grids: true
+constant_uncertainty:
+  SN:
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+  BNF:
+    mc_relative_lower: -0.15
+    mc_relative_upper: 0.15
+monte_carlo:
+  scheme: source_mixture_independent
+  distribution: uniform_relative
+  n_simulations: 5000
+  batch_size: 64
+  random_seed: 42
+parallel:
+  enabled: true
+  max_workers: 16
+  max_pending_tasks: 24
+  scratch_dir: null
+global_aggregation:
+  method: nup_ratio_of_sums
+  area_threshold: 0.0
+  nue_min_value: 0.0
+  nup_min_value: 0.0
+  additional_nodata:
+  - -9999.0
+  restrict_to_baseline_valid: true
+  reference_nue_mask:
+    directory: Z:/staff/Qiang_S/09_Datasets/03GlobalNUE_Results/01Global_NUE_Wheat/02WheatNUE_M2_20261030V1_M6_150R
+    filename_template: NUE_median_Opt_{year}.tif
+  harvested_area:
+    directory: Z:/staff/Qiang_S/09_Datasets/09OtherDataUsed/GCSN_HarvestedArea_1995_2020/02StandardizedDatasets/01WheatHarvestedArea
+    filename_template: Wheat_HarArea_{year}.tif
+  baseline_nup:
+    directory: Z:/staff/Qiang_S/09_Datasets/03GlobalNUE_Results/01Global_NUE_Wheat/02WheatNUE_M2_20261030V1
+    filename_template: Nup_M2_median_{year}.tif
